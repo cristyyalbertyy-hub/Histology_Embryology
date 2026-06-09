@@ -8,21 +8,56 @@ type Props = {
   onExhausted: () => void;
 };
 
+async function isMediaUrl(url: string): Promise<boolean> {
+  try {
+    const r = await fetch(url, { method: "HEAD" });
+    if (!r.ok) return false;
+    const ct = r.headers.get("content-type") ?? "";
+    return !ct.includes("text/html");
+  } catch {
+    return false;
+  }
+}
+
 export function MediaWithFallback({ paths, urlKey, render, onExhausted }: Props) {
   const [index, setIndex] = useState(0);
-  const src = assetUrl(paths[index] ?? paths[0]);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
+    let cancelled = false;
     setIndex(0);
+    setReady(false);
+
+    (async () => {
+      for (let i = 0; i < paths.length; i++) {
+        if (cancelled) return;
+        if (await isMediaUrl(assetUrl(paths[i]))) {
+          setIndex(i);
+          setReady(true);
+          return;
+        }
+      }
+      if (!cancelled) onExhausted();
+    })();
+
+    return () => {
+      cancelled = true;
+    };
   }, [urlKey]);
 
+  const src = assetUrl(paths[index] ?? paths[0]);
+
   const handleError = () => {
-    if (index < paths.length - 1) {
-      setIndex((i) => i + 1);
+    const next = index + 1;
+    if (next < paths.length) {
+      setIndex(next);
       return;
     }
+    setReady(false);
     onExhausted();
   };
+
+  if (!ready) return null;
 
   return <>{render({ src, onError: handleError })}</>;
 }

@@ -21,7 +21,11 @@ export function podcastPathCandidates(assetCode: string): string[] {
 
 export function infographicPathCandidates(assetCode: string): string[] {
   return unique(
-    stemsFor(assetCode).flatMap((stem) => [`/${stem}_I.png`, `/${stem}_II.png`]),
+    stemsFor(assetCode).flatMap((stem) => [
+      `/${stem}_I.png`,
+      `/${stem}.png`,
+      `/${stem}_II.png`,
+    ]),
   );
 }
 
@@ -31,4 +35,15 @@ export function questionnairePathCandidates(
 ): string[] {
   if (override) return [override];
   return unique(stemsFor(assetCode).map((stem) => `/${stem}_Q.csv`));
+}
+
+/** Example filenames under `public/` for a lesson stem (for UI / debugging). */
+export function publicAssetExamples(stem: string): string[] {
+  return [
+    `${stem}_Vx.mp4`,
+    `${stem}_P.m4a`,
+    `${stem}_I.png`,
+    `${stem}_II.png`,
+    `${stem}_Q.csv`,
+  ];
 }

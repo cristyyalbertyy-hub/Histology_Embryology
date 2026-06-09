@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { type ResolvedLesson } from "../data/curriculum";
+import { mediaAssetStem } from "../data/curriculum";
 import {
   infographicPathCandidates,
   podcastPathCandidates,
+  publicAssetExamples,
   questionnairePathCandidates,
   videoPathCandidates,
 } from "../utils/mediaPaths";
@@ -16,8 +18,10 @@ type Props = { lesson: ResolvedLesson };
 
 export function LessonContent({ lesson }: Props) {
   const { system, section, topic, assetCode, questionnairePath } = lesson;
+  const stem = mediaAssetStem(assetCode);
   const title = topic?.title ?? section.title;
   const breadcrumb = topic ? `${system.title} › ${section.title}` : system.title;
+  const publicFiles = publicAssetExamples(stem);
 
   const [tab, setTab] = useState<MediaTabId>("video");
 
@@ -39,8 +43,17 @@ export function LessonContent({ lesson }: Props) {
     <div className="lesson-view">
       <header className="subchapter-head">
         <p className="eyebrow">{breadcrumb}</p>
-        <h2>{title}</h2>
-        <p className="lesson-code">{assetCode}</p>
+        <h2 className="lesson-stem">{stem}</h2>
+        <p className="lesson-subtitle">{title}</p>
+        <p className="lesson-files muted small">
+          Ficheiros em <code>public/</code>:{" "}
+          {publicFiles.map((name, i) => (
+            <span key={name}>
+              {i > 0 ? ", " : null}
+              <code>{name}</code>
+            </span>
+          ))}
+        </p>
       </header>
 
       <MediaTabs active={tab} onChange={setTab} />

@@ -408,7 +408,7 @@ code {
     0 0 0 1px rgba(141, 169, 255, 0.18);
 }
 
-.lesson-card--section-leaf .lesson-card-title {
+.lesson-card--section-leaf .lesson-card-stem {
   font-size: 0.9rem;
   font-weight: 600;
   color: #e8f0ff;
@@ -421,18 +421,22 @@ code {
   min-width: 0;
 }
 
-.lesson-card--topic .lesson-card-title {
-  font-size: 0.82rem;
-  font-weight: 500;
-  line-height: 1.25;
-  color: #b8c6e4;
-}
-
-.lesson-card-code {
-  font-size: 0.72rem;
-  color: var(--muted);
+.lesson-card-stem {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   letter-spacing: 0.02em;
+}
+
+.lesson-card--topic .lesson-card-stem {
+  font-size: 0.82rem;
+  font-weight: 600;
+  line-height: 1.25;
+  color: #d4e0ff;
+}
+
+.lesson-card-subtitle {
+  font-size: 0.7rem;
+  color: var(--muted);
+  line-height: 1.2;
 }
 
 .lesson-card--topic .lesson-card-arrow {
@@ -597,11 +601,19 @@ code {
   letter-spacing: -0.015em;
 }
 
-.lesson-code {
-  margin: 0;
+.lesson-stem {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-size: 0.8rem;
+}
+
+.lesson-subtitle {
+  margin: 0;
+  font-size: 0.95rem;
   color: var(--muted);
+}
+
+.lesson-files {
+  margin: 0.35rem 0 0;
+  line-height: 1.45;
 }
 
 .eyebrow {

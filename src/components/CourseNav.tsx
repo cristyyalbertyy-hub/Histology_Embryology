@@ -1,5 +1,6 @@
 import {
   courseTitle,
+  mediaAssetStem,
   resolveLesson,
   sectionHasTopics,
   systems,
@@ -28,14 +29,14 @@ function sectionKey(systemId: string, sectionId: string): string {
 }
 
 function LessonCard({
-  title,
-  code,
+  stem,
+  subtitle,
   active,
   variant = "topic",
   onClick,
 }: {
-  title: string;
-  code: string;
+  stem: string;
+  subtitle?: string;
   active: boolean;
   variant?: "topic" | "section-leaf";
   onClick: () => void;
@@ -47,8 +48,8 @@ function LessonCard({
       onClick={onClick}
     >
       <span className="lesson-card-body">
-        <span className="lesson-card-title">{title}</span>
-        <span className="lesson-card-code">{code}</span>
+        <span className="lesson-card-stem">{stem}</span>
+        {subtitle ? <span className="lesson-card-subtitle">{subtitle}</span> : null}
       </span>
       <span className="lesson-card-arrow" aria-hidden>
         ›
@@ -78,8 +79,8 @@ function TopicItem({
   return (
     <li className="nav-topic-item">
       <LessonCard
-        title={topic.title}
-        code={topic.assetCode}
+        stem={mediaAssetStem(topic.assetCode)}
+        subtitle={topic.title}
         active={active}
         onClick={() =>
           onSelectLesson({
@@ -122,8 +123,8 @@ function SectionBlock({
     return (
       <li className="nav-section-leaf">
         <LessonCard
-          title={section.title}
-          code={section.assetCode}
+          stem={mediaAssetStem(section.assetCode)}
+          subtitle={section.title}
           variant="section-leaf"
           active={isLeafActive}
           onClick={() =>
