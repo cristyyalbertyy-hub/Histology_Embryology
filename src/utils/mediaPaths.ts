@@ -19,6 +19,14 @@ export function podcastPathCandidates(assetCode: string): string[] {
   return unique(stemsFor(assetCode).map((stem) => `/${stem}_P.m4a`));
 }
 
+/** Primary and secondary infographics for a lesson (`_I` then `_II`). */
+export function infographicSlides(assetCode: string): string[] {
+  return unique(
+    stemsFor(assetCode).flatMap((stem) => [`/${stem}_I.png`, `/${stem}_II.png`]),
+  );
+}
+
+/** Legacy single-image fallback chain (kept for compatibility). */
 export function infographicPathCandidates(assetCode: string): string[] {
   return unique(
     stemsFor(assetCode).flatMap((stem) => [

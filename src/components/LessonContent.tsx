@@ -2,13 +2,14 @@ import { useEffect, useState } from "react";
 import { type ResolvedLesson } from "../data/curriculum";
 import { mediaAssetStem } from "../data/curriculum";
 import {
-  infographicPathCandidates,
+  infographicSlides,
   podcastPathCandidates,
   publicAssetExamples,
   questionnairePathCandidates,
   videoPathCandidates,
 } from "../utils/mediaPaths";
 import { assetUrl } from "../utils/assetUrl";
+import { InfographicGallery } from "./InfographicGallery";
 import { MediaBlock } from "./MediaBlock";
 import { MediaTabs, type MediaTabId } from "./MediaTabs";
 import { MediaWithFallback } from "./MediaWithFallback";
@@ -31,7 +32,7 @@ export function LessonContent({ lesson }: Props) {
 
   const videoPaths = videoPathCandidates(assetCode);
   const audioPaths = podcastPathCandidates(assetCode);
-  const imagePaths = infographicPathCandidates(assetCode);
+  const imagePaths = infographicSlides(assetCode);
   const qPaths = questionnairePathCandidates(assetCode, questionnairePath);
 
   const videoKey = videoPaths.map((p) => assetUrl(p)).join("|");
@@ -105,18 +106,11 @@ export function LessonContent({ lesson }: Props) {
         {tab === "infographic" ? (
           <MediaBlock key={`${assetCode}-i`} urlKey={imageKey} bare>
             {({ onMissing }) => (
-              <MediaWithFallback
+              <InfographicGallery
                 paths={imagePaths}
                 urlKey={imageKey}
-                onExhausted={onMissing}
-                render={({ src, onError }) => (
-                  <img
-                    className="infographic"
-                    src={src}
-                    alt={`Infographic: ${title}`}
-                    onError={onError}
-                  />
-                )}
+                title={title}
+                onMissing={onMissing}
               />
             )}
           </MediaBlock>

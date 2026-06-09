@@ -661,6 +661,20 @@ code {
   width: 100%;
 }
 
+.infographic-gallery {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.infographic-slide {
+  margin: 0;
+}
+
+.infographic-label {
+  margin: 0 0 0.4rem;
+}
+
 .infographic {
   max-width: 100%;
   height: auto;

@@ -1,5 +1,6 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { assetUrl } from "../utils/assetUrl";
+import { isMediaUrl } from "../utils/isMediaUrl";
 
 type Props = {
   paths: string[];
@@ -7,17 +8,6 @@ type Props = {
   render: (props: { src: string; onError: () => void }) => ReactNode;
   onExhausted: () => void;
 };
-
-async function isMediaUrl(url: string): Promise<boolean> {
-  try {
-    const r = await fetch(url, { method: "HEAD" });
-    if (!r.ok) return false;
-    const ct = r.headers.get("content-type") ?? "";
-    return !ct.includes("text/html");
-  } catch {
-    return false;
-  }
-}
 
 export function MediaWithFallback({ paths, urlKey, render, onExhausted }: Props) {
   const [index, setIndex] = useState(0);
@@ -31,7 +21,7 @@ export function MediaWithFallback({ paths, urlKey, render, onExhausted }: Props)
     (async () => {
       for (let i = 0; i < paths.length; i++) {
         if (cancelled) return;
-        if (await isMediaUrl(assetUrl(paths[i]))) {
+        if (await isMediaUrl(paths[i])) {
           setIndex(i);
           setReady(true);
           return;
