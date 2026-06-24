@@ -18,6 +18,8 @@ export type Section = {
 export type System = {
   id: string;
   title: string;
+  /** Chapter bar colour (Moral Philosophy palette). */
+  color: string;
   sections: Section[];
   /** Chapter overview infographic in `public/` (shown when exploring the chapter). */
   overviewImage?: string;
@@ -29,6 +31,7 @@ export const systems: System[] = [
   {
     id: "cy",
     title: "Elements of Cytology",
+    color: "#14213d",
     overviewImage: "/inf_cystology.png",
     sections: [
       {
@@ -46,6 +49,7 @@ export const systems: System[] = [
   {
     id: "hi",
     title: "Histology",
+    color: "#2d4636",
     sections: [
       {
         id: "hi-topics",
@@ -65,6 +69,7 @@ export const systems: System[] = [
   {
     id: "em",
     title: "Embryology",
+    color: "#d36b31",
     sections: [
       {
         id: "em-gam",
@@ -100,6 +105,7 @@ export const systems: System[] = [
   {
     id: "or",
     title: "Organogenesis",
+    color: "#14213d",
     sections: [
       {
         id: "or-topics",

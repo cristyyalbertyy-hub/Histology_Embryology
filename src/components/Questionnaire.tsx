@@ -7,12 +7,15 @@ type Props = { paths: string[]; urlKey: string };
 export function Questionnaire({ paths, urlKey }: Props) {
   const [items, setItems] = useState<{ question: string; answer: string }[] | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [open, setOpen] = useState<Record<number, boolean>>({});
+  const [index, setIndex] = useState(0);
+  const [revealed, setRevealed] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
     setItems(null);
     setError(null);
+    setIndex(0);
+    setRevealed(false);
 
     (async () => {
       let lastError = "Could not load questionnaire.";
@@ -43,30 +46,65 @@ export function Questionnaire({ paths, urlKey }: Props) {
   if (!items) return <p className="muted">Loading questions…</p>;
   if (items.length === 0) return <p className="muted">No questions in this file.</p>;
 
+  const card = items[index]!;
+  const atStart = index === 0;
+  const atEnd = index >= items.length - 1;
+
+  const goPrevious = () => {
+    if (atStart) return;
+    setIndex((i) => i - 1);
+    setRevealed(false);
+  };
+
+  const goNext = () => {
+    if (atEnd) return;
+    setIndex((i) => i + 1);
+    setRevealed(false);
+  };
+
   return (
-    <ul className="q-list">
-      {items.map((it, idx) => (
-        <li key={idx} className="q-item">
-          <button
-            type="button"
-            className="q-toggle"
-            onClick={() => setOpen((o) => ({ ...o, [idx]: !o[idx] }))}
-            aria-expanded={!!open[idx]}
-          >
-            <span className="q-num">{idx + 1}.</span>
-            <span className="q-text">{it.question}</span>
-            <span className="q-chevron" aria-hidden>
-              {open[idx] ? "▼" : "▶"}
-            </span>
-          </button>
-          {open[idx] ? (
-            <div className="q-answer">
-              <span className="q-answer-label">Answer</span>
-              <p>{it.answer}</p>
+    <div className="questionnaire">
+      <p className="questionnaire__progress">
+        Question {index + 1} of {items.length}
+      </p>
+
+      <div className="questionnaire__nav-row">
+        <button
+          type="button"
+          className="questionnaire__arrow"
+          onClick={goPrevious}
+          disabled={atStart}
+          aria-label="Previous question"
+        >
+          ←
+        </button>
+
+        <div className="questionnaire__card">
+          <p className="questionnaire__question">{card.question}</p>
+          {revealed ? (
+            <div className="questionnaire__answer">
+              <span className="questionnaire__answer-label">Answer</span>
+              <p>{card.answer}</p>
             </div>
           ) : null}
-        </li>
-      ))}
-    </ul>
+        </div>
+
+        <button
+          type="button"
+          className="questionnaire__arrow"
+          onClick={goNext}
+          disabled={atEnd}
+          aria-label="Next question"
+        >
+          →
+        </button>
+      </div>
+
+      {!revealed ? (
+        <button type="button" className="questionnaire__reveal" onClick={() => setRevealed(true)}>
+          Show answer
+        </button>
+      ) : null}
+    </div>
   );
 }

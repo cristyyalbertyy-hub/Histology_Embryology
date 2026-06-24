@@ -1,6 +1,5 @@
 import {
   courseTitle,
-  mediaAssetStem,
   resolveLesson,
   sectionHasTopics,
   systems,
@@ -29,28 +28,17 @@ function sectionKey(systemId: string, sectionId: string): string {
 }
 
 function LessonCard({
-  stem,
-  subtitle,
+  title,
   active,
-  variant = "topic",
   onClick,
 }: {
-  stem: string;
-  subtitle?: string;
+  title: string;
   active: boolean;
-  variant?: "topic" | "section-leaf";
   onClick: () => void;
 }) {
   return (
-    <button
-      type="button"
-      className={`lesson-card lesson-card--${variant}${active ? " active" : ""}`}
-      onClick={onClick}
-    >
-      <span className="lesson-card-body">
-        <span className="lesson-card-stem">{stem}</span>
-        {subtitle ? <span className="lesson-card-subtitle">{subtitle}</span> : null}
-      </span>
+    <button type="button" className={`lesson-card${active ? " active" : ""}`} onClick={onClick}>
+      <span className="lesson-card-title">{title}</span>
       <span className="lesson-card-arrow" aria-hidden>
         ›
       </span>
@@ -79,8 +67,7 @@ function TopicItem({
   return (
     <li className="nav-topic-item">
       <LessonCard
-        stem={mediaAssetStem(topic.assetCode)}
-        subtitle={topic.title}
+        title={topic.title}
         active={active}
         onClick={() =>
           onSelectLesson({
@@ -123,9 +110,7 @@ function SectionBlock({
     return (
       <li className="nav-section-leaf">
         <LessonCard
-          stem={mediaAssetStem(section.assetCode)}
-          subtitle={section.title}
-          variant="section-leaf"
+          title={section.title}
           active={isLeafActive}
           onClick={() =>
             onSelectLesson({ systemId: system.id, sectionId: section.id, topicId: null })
@@ -195,10 +180,11 @@ export function CourseNav({
       {systems.map((system) => {
         const sysOpen = openSystems[system.id] ?? false;
         return (
-          <div key={system.id} className={`accordion accordion--system${sysOpen ? " is-open" : ""}`}>
+          <div key={system.id} className={`accordion accordion--system${sysOpen ? " is-open" : ""}`} data-system={system.id}>
             <button
               type="button"
               className="accordion-trigger accordion-trigger--system"
+              style={{ backgroundColor: system.color }}
               aria-expanded={sysOpen}
               onClick={() => onToggleSystem(system.id)}
             >
@@ -208,7 +194,7 @@ export function CourseNav({
               <span className="system-name">{system.title}</span>
             </button>
             {sysOpen ? (
-              <div className="section-tree">
+              <div className="section-tree" style={{ borderTopColor: system.color }}>
                 <ul className="section-list">
                   {system.sections.map((section) => (
                     <SectionBlock
