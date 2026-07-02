@@ -9,6 +9,10 @@ export const STORE_URL =
   (import.meta.env.VITE_STORE_URL as string | undefined) ??
   'https://medical-science-lilac.vercel.app/precos/'
 
+export const ACCOUNT_URL =
+  (import.meta.env.VITE_ACCOUNT_URL as string | undefined) ??
+  'https://medical-science-lilac.vercel.app/conta/'
+
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY as string | undefined,
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN as string | undefined,
