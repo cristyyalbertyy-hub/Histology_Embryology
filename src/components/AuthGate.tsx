@@ -16,9 +16,16 @@ type AuthGateProps = {
   appTitle: string
 }
 
+/** Acesso livre temporário enquanto Biology/Genetics estão em piloto de compra. */
+const OPEN_ACCESS = true
+
 export function AuthGate({ children, appTitle }: AuthGateProps) {
   const { loading, user, entitlementLoading, hasAccess, configured } = useAuth()
   const fromConta = useMemo(() => isFromContaHandoff(), [])
+
+  if (OPEN_ACCESS) {
+    return <>{children}</>
+  }
 
   if (!configured) {
     return (
