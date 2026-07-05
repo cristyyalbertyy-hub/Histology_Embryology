@@ -4,7 +4,7 @@ What aqueous gel contains the organelles and inclusions within a cell?,The cytop
 Which category of organelles possesses plasma membranes that separate their internal environment from the cytoplasm?,Membranous organelles
 What do the enclosed spaces of membranous organelles constitute within the cell?,Intracellular microcompartments
 Which category of organelles lacks a plasma membrane and often contains proteins that self-assemble into polymers?,Nonmembranous organelles
-What is the approximate thickness of the plasma membrane in microns?,$0.008$ to $0.01$ $\mu$m
+What is the approximate thickness of the plasma membrane in microns?,0.008 to 0.01 \mum
 Why is the plasma membrane not visible when using a standard light microscope?,Its thickness is below the resolution limit of the light microscope.
 What is the primary site of protein synthesis and modification of newly synthesized proteins?,Rough-surfaced endoplasmic reticulum (rER).
 The light microscopic term for the intensely basophilic regions of cytoplasm in cells active in protein synthesis is _____.,Ergastoplasm
@@ -16,16 +16,16 @@ Which organelle consists of multiple flattened cisternae and is responsible for 
 "In standard histologic preparations, the Golgi apparatus often appears as a _____.",Negative staining region
 Where are early endosomes typically located within the cell?,Peripheral cytoplasm near the cell membrane.
 What is the typical destination for late endosomes as they mature?,Lysosomes
-Which endosomal compartment has a lumen pH ranging from $6.2$ to $6.5$?,Early endosome
-Which endosomal compartment has a more acidic average pH of $5.5$?,Late endosome
+Which endosomal compartment has a lumen pH ranging from 6.2 to 6.5?,Early endosome
+Which endosomal compartment has a more acidic average pH of 5.5?,Late endosome
 Selective vesicles that transport substances between early and late endosomes are called _____.,Multivesicular bodies (MVBs)
 What is the major digestive compartment in the cell that contains hydrolytic enzymes?,Lysosome
 Process: Autophagy,"Definition: The degradation of the cell's own cytoplasmic components, like organelles, within lysosomes."
 Which organelles provide most of the energy to the cell by producing adenosine triphosphate (ATP)?,Mitochondria
 What vital dye can be used to visualize mitochondria in living cells?,Janus green B
 The internal membrane folds of mitochondria that increase surface area are called _____.,Cristae
-Which small organelles are involved in the production and degradation of hydrogen peroxide ($H_{2}O_{2}$)?,Peroxisomes
-What are the primary protein subunits that compose microtubules?,$\alpha$-tubulin and $\beta$-tubulin.
+Which small organelles are involved in the production and degradation of hydrogen peroxide (H_{2}O_{2})?,Peroxisomes
+What are the primary protein subunits that compose microtubules?,\alpha-tubulin and \beta-tubulin.
 The property of microtubules continuously elongating and shortening is known as _____.,Dynamic instability
 Which cytoskeletal element is composed of flexible chains of actin molecules?,Actin filaments (microfilaments).
 Which ropelike cytoskeletal fibers provide tensile strength and resistance to shearing forces?,Intermediate filaments
@@ -41,9 +41,9 @@ Which form of chromatin is highly condensed and stains intensely with hematoxyli
 What are the macromolecular complexes of DNA and histones that represent the smallest units of chromatin?,Nucleosomes
 How many histone molecules form the core octamer of a nucleosome?,Eight
 The visual appearance of extracted chromatin in transmission electron microscopy is often described as _____.,Beads on a string
-Six nucleosomes coiled together produce a structure known as the _____.,$30$-nm chromatin fibril
+Six nucleosomes coiled together produce a structure known as the _____.,30-nm chromatin fibril
 What point joins the two sister chromatids of a metaphase chromosome?,Centromere
-How many pairs of homologous chromosomes are found in a typical human somatic cell?,$23$ pairs (Total of $46$).
+How many pairs of homologous chromosomes are found in a typical human somatic cell?,23 pairs (Total of 46).
 What is the nonmembranous region of the nucleus where rRNA is synthesized?,The nucleolus
 Which nucleolar region represents the site of initial ribosomal assembly?,Granular material (pars granulosa).
 Which nucleolar region contains ribosomal genes actively undergoing transcription?,Fibrillar material (pars fibrosa).
@@ -57,9 +57,9 @@ Which specialized intermediate filaments primarily compose the nuclear lamina?,L
 What mediates the active transport of proteins and RNA between the nucleus and cytoplasm?,Nuclear pore complexes (NPCs).
 Which signal sequence must be attached to a large molecule to allow its passage through nuclear pores?,Nuclear localization signal (NLS).
 Which soluble cytosolic receptor directs NLS-tagged proteins to the nuclear pore complex?,Importin (nuclear import receptor).
-What is the effective diffusion size limit for substances crossing the nuclear pore without active transport?,$9$ nm
+What is the effective diffusion size limit for substances crossing the nuclear pore without active transport?,9 nm
 "The amorphous material enclosed by the nuclear envelope, excluding chromatin and nucleoli, is called _____.",Nucleoplasm
-During which phase of the cell cycle does the DNA content double from $2d$ to $4d$?,S phase (synthesis phase).
+During which phase of the cell cycle does the DNA content double from 2d to 4d?,S phase (synthesis phase).
 What specialized protein complex on the chromosome serves as the attachment point for spindle microtubules?,Kinetochore
 Condensed bodies of chromatin irregular in shape found throughout the nucleus are called _____.,Karyosomes
 "The condensed, inactive X chromosome visible in the nuclei of female cells is known as the _____.",Barr body
@@ -72,7 +72,7 @@ The terminal web at the base of microvilli is primarily composed of which cytosk
 Which specialized embryonic cilia are capable of rotational movement to pattern the cranial-caudal axis?,Nodal cilia
 The cytoplasm of a muscle cell is specifically termed the _____.,Sarcoplasm
 Eosinophilic intracytoplasmic inclusions in hepatocytes during alcoholic liver cirrhosis are called _____.,Mallory bodies
-Which organelle is the site of fatty acid degradation and the breakdown of $H_{2}O_{2}$?,Peroxisomes
+Which organelle is the site of fatty acid degradation and the breakdown of H_{2}O_{2}?,Peroxisomes
 A single rod-shaped centriole consists of how many triplets of microtubules?,Nine
 Which lamin receptor binds both lamin A and lamin B?,Emerin
 Nuclear chromatin found at the periphery of the nucleus is specifically called _____.,Marginal chromatin
