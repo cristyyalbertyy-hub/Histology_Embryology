@@ -2,7 +2,6 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { ChapterOverview } from "./components/ChapterOverview";
 import { CourseNav, useLessonFromSelection, type LessonSelection } from "./components/CourseNav";
 import { LessonContent } from "./components/LessonContent";
-import { ProgressLink } from "./components/ProgressLink";
 import { courseTitle, systemById, systems } from "./data/curriculum";
 import { assetUrl } from "./utils/assetUrl";
 
@@ -107,9 +106,6 @@ export default function App() {
       />
       <p className="overview-hint muted">
         Open a coloured chapter below, then choose a sub-topic to start.
-      </p>
-      <p className="overview-progress muted">
-        Already enrolled? <ProgressLink className="progress-link--inline" />
       </p>
       <button type="button" className="mobile-browse-btn" onClick={() => setMobileMenuOpen(true)}>
         Browse chapters →
@@ -230,7 +226,6 @@ export default function App() {
           <span className="home-overview-btn__label">Course overview</span>
         </button>
         <h1>{courseTitle}</h1>
-        <ProgressLink className="progress-link--header" compact />
       </header>
 
       {showMobileLessonBar && mobileLessonContext ? (
@@ -258,7 +253,6 @@ export default function App() {
             onToggleSection={toggleSection}
             onSelectLesson={selectLesson}
           />
-          <ProgressLink className="progress-link--sidebar" />
         </div>
 
         <main
