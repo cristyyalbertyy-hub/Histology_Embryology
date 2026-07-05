@@ -50,6 +50,7 @@ export function LessonContent({ lesson }: Props) {
         role="tabpanel"
         id={`panel-${tab}`}
         aria-labelledby={`tab-${tab}`}
+        onContextMenu={(event) => event.preventDefault()}
       >
         {tab === "video" ? (
           <MediaBlock key={`${assetCode}-v`} urlKey={videoKey} bare>
@@ -62,6 +63,8 @@ export function LessonContent({ lesson }: Props) {
                   <video
                     className="video"
                     controls
+                    controlsList="nodownload"
+                    playsInline
                     preload="metadata"
                     src={src}
                     onError={onError}
@@ -80,7 +83,14 @@ export function LessonContent({ lesson }: Props) {
                 urlKey={audioKey}
                 onExhausted={onMissing}
                 render={({ src, onError }) => (
-                  <audio className="audio" controls preload="metadata" src={src} onError={onError}>
+                  <audio
+                    className="audio"
+                    controls
+                    controlsList="nodownload"
+                    preload="metadata"
+                    src={src}
+                    onError={onError}
+                  >
                     Podcast
                   </audio>
                 )}
