@@ -74,7 +74,7 @@ export default function App() {
 
   const dismissChapterOverview = () => setChapterBrowseId(null);
 
-  const overviewImage = assetUrl("/Infographic.png");
+  const overviewImage = assetUrl("/InfographicA.png");
 
   const overviewPanel = (
     <div className="overview-panel">
