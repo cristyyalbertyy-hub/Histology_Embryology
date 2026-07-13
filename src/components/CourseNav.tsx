@@ -18,9 +18,11 @@ type Props = {
   openSystems: Record<string, boolean>;
   openSections: Record<string, boolean>;
   selection: LessonSelection | null;
+  hasChapterAccess?: (chapterId: string) => boolean;
   onToggleSystem: (id: string) => void;
   onToggleSection: (key: string) => void;
   onSelectLesson: (sel: LessonSelection) => void;
+  onLockedChapter?: (chapterId: string) => void;
 };
 
 function sectionKey(systemId: string, sectionId: string): string {
@@ -171,29 +173,43 @@ export function CourseNav({
   openSystems,
   openSections,
   selection,
+  hasChapterAccess,
   onToggleSystem,
   onToggleSection,
   onSelectLesson,
+  onLockedChapter,
 }: Props) {
   return (
     <nav className="sidebar" aria-label={courseTitle}>
       {systems.map((system) => {
         const sysOpen = openSystems[system.id] ?? false;
+        const locked = hasChapterAccess ? !hasChapterAccess(system.id) : false;
         return (
-          <div key={system.id} className={`accordion accordion--system${sysOpen ? " is-open" : ""}`} data-system={system.id}>
+          <div
+            key={system.id}
+            className={`accordion accordion--system${sysOpen ? " is-open" : ""}${locked ? " is-locked" : ""}`}
+            data-system={system.id}
+          >
             <button
               type="button"
-              className="accordion-trigger accordion-trigger--system"
+              className={`accordion-trigger accordion-trigger--system${locked ? " accordion-trigger--locked" : ""}`}
               style={{ backgroundColor: system.color }}
-              aria-expanded={sysOpen}
-              onClick={() => onToggleSystem(system.id)}
+              aria-expanded={locked ? false : sysOpen}
+              aria-disabled={locked || undefined}
+              onClick={() => {
+                if (locked) {
+                  onLockedChapter?.(system.id);
+                  return;
+                }
+                onToggleSystem(system.id);
+              }}
             >
               <span className="chevron" aria-hidden>
-                {sysOpen ? "▼" : "▶"}
+                {locked ? "🔒" : sysOpen ? "▼" : "▶"}
               </span>
               <span className="system-name">{system.title}</span>
             </button>
-            {sysOpen ? (
+            {sysOpen && !locked ? (
               <div className="section-tree" style={{ borderTopColor: system.color }}>
                 <ul className="section-list">
                   {system.sections.map((section) => (

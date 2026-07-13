@@ -16,8 +16,8 @@ type AuthGateProps = {
   appTitle: string
 }
 
-/** Acesso livre temporário enquanto Biology/Genetics estão em piloto de compra. */
-const OPEN_ACCESS = true
+/** Override with VITE_OPEN_ACCESS=true for local dev without login. */
+const OPEN_ACCESS = import.meta.env.VITE_OPEN_ACCESS === 'true'
 
 export function AuthGate({ children, appTitle }: AuthGateProps) {
   const { loading, user, entitlementLoading, hasAccess, configured } = useAuth()

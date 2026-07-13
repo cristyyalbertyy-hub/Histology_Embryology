@@ -1,5 +1,6 @@
 import { collection, doc, getDoc, getDocs, query, where } from 'firebase/firestore'
-import { getFirestoreDb, PACKAGE_ID } from './firebase'
+import { getFirestoreDb } from './firebase'
+import { RELEVANT_PACKAGE_IDS } from './packageAccess'
 
 export type Entitlement = {
   package_id: string
@@ -20,28 +21,43 @@ function parseActiveEntitlement(data: {
   }
 }
 
-export async function fetchActiveEntitlement(
+export async function fetchActiveEntitlements(
   userId: string,
-  packageId = PACKAGE_ID,
-): Promise<Entitlement | null> {
+  packageIds: readonly string[] = RELEVANT_PACKAGE_IDS,
+): Promise<Entitlement[]> {
+  const allowed = new Set(packageIds)
+  const found = new Map<string, Entitlement>()
   const db = getFirestoreDb()
-  const directSnap = await getDoc(doc(db, 'entitlements', `${userId}_${packageId}`))
-  if (directSnap.exists()) {
-    const active = parseActiveEntitlement(
-      directSnap.data() as { package_id: string; expires_at: string },
-    )
-    if (active) return active
+
+  const q = query(collection(db, 'entitlements'), where('user_id', '==', userId))
+  const snapshot = await getDocs(q)
+  for (const docSnap of snapshot.docs) {
+    const data = docSnap.data() as { package_id: string; expires_at: string }
+    if (!allowed.has(data.package_id)) continue
+    const active = parseActiveEntitlement(data)
+    if (active) found.set(active.package_id, active)
   }
 
-  const q = query(
-    collection(db, 'entitlements'),
-    where('user_id', '==', userId),
-    where('package_id', '==', packageId),
+  await Promise.all(
+    packageIds.map(async (packageId) => {
+      if (found.has(packageId)) return
+      const directSnap = await getDoc(doc(db, 'entitlements', `${userId}_${packageId}`))
+      if (!directSnap.exists()) return
+      const active = parseActiveEntitlement(
+        directSnap.data() as { package_id: string; expires_at: string },
+      )
+      if (active) found.set(packageId, active)
+    }),
   )
-  const snapshot = await getDocs(q)
-  if (snapshot.empty) return null
 
-  return parseActiveEntitlement(
-    snapshot.docs[0].data() as { package_id: string; expires_at: string },
-  )
+  return [...found.values()]
+}
+
+/** @deprecated Use fetchActiveEntitlements — kept for single-package callers */
+export async function fetchActiveEntitlement(
+  userId: string,
+  packageId: string,
+): Promise<Entitlement | null> {
+  const results = await fetchActiveEntitlements(userId, [packageId])
+  return results[0] ?? null
 }
