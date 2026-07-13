@@ -54,3 +54,34 @@ export function authContinueUrl(): string {
 }
 
 export const EMAIL_FOR_SIGN_IN_KEY = 'studio9.emailForSignIn'
+
+const STUDIO9_DISPLAY_EMAIL_KEY = 'studio9.displayEmail'
+
+export function persistStudio9LaunchEmail(email: string | null): void {
+  const value = email?.trim()
+  if (!value) return
+  try {
+    sessionStorage.setItem(STUDIO9_DISPLAY_EMAIL_KEY, value)
+    sessionStorage.setItem('studio9_from_conta', '1')
+  } catch {
+    /* ignore */
+  }
+}
+
+export function getStudio9DisplayEmail(): string | null {
+  try {
+    return sessionStorage.getItem(STUDIO9_DISPLAY_EMAIL_KEY)
+  } catch {
+    return null
+  }
+}
+
+export function clearStudio9SessionMarkers(): void {
+  try {
+    sessionStorage.removeItem(STUDIO9_DISPLAY_EMAIL_KEY)
+    sessionStorage.removeItem('studio9_from_conta')
+    sessionStorage.removeItem('studio9_open_package')
+  } catch {
+    /* ignore */
+  }
+}

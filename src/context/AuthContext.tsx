@@ -24,17 +24,29 @@ import {
   getFirebaseAuth,
   isFirebaseConfigured,
   ACCOUNT_URL,
+  persistStudio9LaunchEmail,
+  getStudio9DisplayEmail,
+  clearStudio9SessionMarkers,
 } from '../lib/firebase'
-import { fetchActiveEntitlement, type Entitlement } from '../lib/entitlements'
+import { fetchActiveEntitlements, type Entitlement } from '../lib/entitlements'
+import {
+  ALL_CHAPTER_PREFIXES,
+  allowedPrefixesFromPackageIds,
+} from '../lib/packageAccess'
 
 type AuthContextValue = {
   loading: boolean
   user: User | null
   userEmail: string | null
   entitlement: Entitlement | null
+  entitlements: Entitlement[]
+  ownedPackageIds: string[]
+  allowedChapterPrefixes: string[]
   entitlementLoading: boolean
   entitlementError: string | null
   hasAccess: boolean
+  hasFullAccess: boolean
+  hasChapterAccess: (prefix: string) => boolean
   configured: boolean
   sendMagicLink: (email: string) => Promise<{ error: string | null }>
   logout: () => Promise<void>
@@ -56,30 +68,43 @@ function cleanEmailLinkFromUrl(): void {
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(isFirebaseConfigured)
   const [user, setUser] = useState<User | null>(null)
-  const [entitlement, setEntitlement] = useState<Entitlement | null>(null)
+  const [entitlements, setEntitlements] = useState<Entitlement[]>([])
   const [entitlementLoading, setEntitlementLoading] = useState(false)
   const [entitlementError, setEntitlementError] = useState<string | null>(null)
+  const [launchEmail, setLaunchEmail] = useState<string | null>(() => {
+    const fromUrl = new URLSearchParams(window.location.search).get('studio9_email')?.trim()
+    if (fromUrl) {
+      persistStudio9LaunchEmail(fromUrl)
+      return fromUrl
+    }
+    return getStudio9DisplayEmail()
+  })
+
+  const allowedPrefixSet = useMemo(
+    () => allowedPrefixesFromPackageIds(entitlements.map((e) => e.package_id)),
+    [entitlements],
+  )
 
   const refreshEntitlement = useCallback(async () => {
     if (!user) {
-      setEntitlement(null)
+      setEntitlements([])
       return
     }
     setEntitlementLoading(true)
     setEntitlementError(null)
     try {
-      const active = await fetchActiveEntitlement(user.uid)
-      setEntitlement(active)
-      if (active) {
+      const active = await fetchActiveEntitlements(user.uid)
+      setEntitlements(active)
+      if (active.length) {
         sessionStorage.removeItem('studio9_from_conta')
       }
-      if (!active) {
+      if (!active.length) {
         setEntitlementError(
-          'Nenhum entitlement activo para este módulo. Confirme Firestore → entitlements com o vosso UID e package_id correcto.',
+          'Nenhum entitlement activo para este módulo. Confirme Firestore → entitlements com o vosso UID e package_id correcto (histology, embryology ou histology-embryology).',
         )
       }
     } catch (err) {
-      setEntitlement(null)
+      setEntitlements([])
       const message =
         err instanceof Error ? err.message : 'Erro ao ler entitlements.'
       setEntitlementError(message)
@@ -89,6 +114,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [user])
 
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    persistStudio9LaunchEmail(params.get('studio9_email'))
+    setLaunchEmail(getStudio9DisplayEmail())
+
     if (!isFirebaseConfigured) {
       setLoading(false)
       return
@@ -103,11 +132,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         await setPersistence(auth, browserLocalPersistence)
 
         const params = new URLSearchParams(window.location.search)
+        persistStudio9LaunchEmail(params.get('studio9_email'))
         const handoff = params.get('studio9_handoff')
         if (handoff) {
           sessionStorage.setItem('studio9_from_conta', '1')
           await signInWithCustomToken(auth, handoff)
           params.delete('studio9_handoff')
+          params.delete('studio9_email')
+          params.delete('studio9_open')
+          const rest = params.toString()
+          window.history.replaceState(
+            null,
+            '',
+            `${window.location.pathname}${rest ? `?${rest}` : ''}${window.location.hash}`,
+          )
+        } else if (params.has('studio9_email')) {
+          params.delete('studio9_email')
           const rest = params.toString()
           window.history.replaceState(
             null,
@@ -150,7 +190,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!user) {
-      setEntitlement(null)
+      setEntitlements([])
       setEntitlementLoading(false)
       return
     }
@@ -182,22 +222,37 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const logout = useCallback(async () => {
-    if (!isFirebaseConfigured) return
-    sessionStorage.removeItem('studio9_from_conta')
-    await signOut(getFirebaseAuth())
-    setEntitlement(null)
+    clearStudio9SessionMarkers()
+    setLaunchEmail(null)
+    if (isFirebaseConfigured) {
+      await signOut(getFirebaseAuth())
+    }
+    setEntitlements([])
     window.location.assign(ACCOUNT_URL)
   }, [])
+
+  const openAccess = import.meta.env.VITE_OPEN_ACCESS === 'true'
+
+  const hasChapterAccess = useCallback(
+    (prefix: string) => openAccess || allowedPrefixSet.has(prefix),
+    [allowedPrefixSet, openAccess],
+  )
 
   const value = useMemo<AuthContextValue>(
     () => ({
       loading,
       user,
-      userEmail: user?.email ?? null,
-      entitlement,
+      userEmail: user?.email ?? launchEmail,
+      entitlement: entitlements[0] ?? null,
+      entitlements,
+      ownedPackageIds: entitlements.map((e) => e.package_id),
+      allowedChapterPrefixes: [...allowedPrefixSet],
       entitlementLoading,
       entitlementError,
-      hasAccess: Boolean(entitlement),
+      hasAccess: openAccess || allowedPrefixSet.size > 0,
+      hasFullAccess:
+        openAccess || ALL_CHAPTER_PREFIXES.every((prefix) => allowedPrefixSet.has(prefix)),
+      hasChapterAccess,
       configured: isFirebaseConfigured,
       sendMagicLink,
       logout,
@@ -206,9 +261,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     [
       loading,
       user,
-      entitlement,
+      launchEmail,
+      entitlements,
+      allowedPrefixSet,
+      openAccess,
       entitlementLoading,
       entitlementError,
+      hasChapterAccess,
       sendMagicLink,
       logout,
       refreshEntitlement,
