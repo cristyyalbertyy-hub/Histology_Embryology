@@ -2,7 +2,6 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { ChapterOverview } from "./components/ChapterOverview";
 import { CourseNav, useLessonFromSelection, type LessonSelection } from "./components/CourseNav";
 import { LessonContent } from "./components/LessonContent";
-import { LockedChapterPanel } from "./components/LockedChapterPanel";
 import { useAuth } from "./context/AuthContext";
 import { courseTitle, systemById, systems } from "./data/curriculum";
 import { assetUrl } from "./utils/assetUrl";
@@ -14,7 +13,7 @@ function collapsedRecord(ids: string[]): Record<string, boolean> {
 }
 
 export default function App() {
-  const { hasChapterAccess, userEmail, logout } = useAuth();
+  const { userEmail, logout } = useAuth();
   const [openSystems, setOpenSystems] = useState(() =>
     collapsedRecord(systems.map((s) => s.id)),
   );
@@ -22,7 +21,6 @@ export default function App() {
   const [selection, setSelection] = useState<LessonSelection | null>(null);
   const [atHome, setAtHome] = useState(true);
   const [chapterBrowseId, setChapterBrowseId] = useState<string | null>(null);
-  const [lockedChapterId, setLockedChapterId] = useState<string | null>(null);
   const [chapterViewRevision, setChapterViewRevision] = useState(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(true);
   const mainRef = useRef<HTMLElement>(null);
@@ -128,19 +126,9 @@ export default function App() {
   };
 
   const exploreChapter = (id: string) => {
-    if (!hasChapterAccess(id)) {
-      setSelection(null);
-      setAtHome(false);
-      setMobileMenuOpen(false);
-      setChapterBrowseId(null);
-      setLockedChapterId(id);
-      return;
-    }
-
     const sys = systemById(id);
     if (!sys?.overviewImage) return;
 
-    setLockedChapterId(null);
     setSelection(null);
     setAtHome(false);
     setMobileMenuOpen(false);
@@ -180,17 +168,7 @@ export default function App() {
   };
 
   const selectLesson = (sel: LessonSelection) => {
-    if (!hasChapterAccess(sel.systemId)) {
-      setLockedChapterId(sel.systemId);
-      setAtHome(false);
-      setSelection(null);
-      setChapterBrowseId(null);
-      setMobileMenuOpen(false);
-      return;
-    }
-
     dismissChapterOverview();
-    setLockedChapterId(null);
     setAtHome(false);
     setSelection(sel);
     setMobileMenuOpen(false);
@@ -223,7 +201,6 @@ export default function App() {
     setAtHome(true);
     setSelection(null);
     setChapterBrowseId(null);
-    setLockedChapterId(null);
     setMobileMenuOpen(false);
     setOpenSystems(collapsedRecord(systems.map((s) => s.id)));
     setOpenSections({});
@@ -286,17 +263,9 @@ export default function App() {
             openSystems={openSystems}
             openSections={openSections}
             selection={selection}
-            hasChapterAccess={hasChapterAccess}
             onToggleSystem={toggleSystem}
             onToggleSection={toggleSection}
             onSelectLesson={selectLesson}
-            onLockedChapter={(id) => {
-              setLockedChapterId(id);
-              setAtHome(false);
-              setSelection(null);
-              setChapterBrowseId(null);
-              setMobileMenuOpen(false);
-            }}
           />
         </div>
 
@@ -307,11 +276,6 @@ export default function App() {
         >
           {atHome ? (
             overviewPanel
-          ) : lockedChapterId ? (
-            <LockedChapterPanel
-              chapterId={lockedChapterId}
-              chapterTitle={systemById(lockedChapterId)?.title ?? lockedChapterId}
-            />
           ) : showChapterOverview && chapterSystem ? (
             <ChapterOverview
               key={`${chapterBrowseId}-${chapterViewRevision}`}
