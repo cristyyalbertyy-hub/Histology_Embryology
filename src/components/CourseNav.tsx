@@ -23,6 +23,7 @@ type Props = {
   onToggleSection: (key: string) => void;
   onSelectLesson: (sel: LessonSelection) => void;
   onLockedChapter?: (chapterId: string) => void;
+  hideLockedChapters?: boolean;
 };
 
 function sectionKey(systemId: string, sectionId: string): string {
@@ -178,12 +179,14 @@ export function CourseNav({
   onToggleSection,
   onSelectLesson,
   onLockedChapter,
+  hideLockedChapters = false,
 }: Props) {
   return (
     <nav className="sidebar" aria-label={courseTitle}>
       {systems.map((system) => {
         const sysOpen = openSystems[system.id] ?? false;
         const locked = hasChapterAccess ? !hasChapterAccess(system.id) : false;
+        if (hideLockedChapters && locked) return null;
         return (
           <div
             key={system.id}

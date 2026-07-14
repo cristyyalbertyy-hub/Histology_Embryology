@@ -26,6 +26,8 @@ import {
   ACCOUNT_URL,
   persistStudio9LaunchEmail,
   getStudio9DisplayEmail,
+  getStudio9OpenPackage,
+  persistStudio9OpenPackage,
   clearStudio9SessionMarkers,
 } from '../lib/firebase'
 import { fetchActiveEntitlements, type Entitlement } from '../lib/entitlements'
@@ -47,6 +49,7 @@ type AuthContextValue = {
   hasAccess: boolean
   hasFullAccess: boolean
   hasChapterAccess: (prefix: string) => boolean
+  launchPackageId: string | null
   configured: boolean
   sendMagicLink: (email: string) => Promise<{ error: string | null }>
   logout: () => Promise<void>
@@ -71,6 +74,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [entitlements, setEntitlements] = useState<Entitlement[]>([])
   const [entitlementLoading, setEntitlementLoading] = useState(false)
   const [entitlementError, setEntitlementError] = useState<string | null>(null)
+  const [launchPackageId, setLaunchPackageId] = useState<string | null>(() => getStudio9OpenPackage())
   const [launchEmail, setLaunchEmail] = useState<string | null>(() => {
     const fromUrl = new URLSearchParams(window.location.search).get('studio9_email')?.trim()
     if (fromUrl) {
@@ -116,7 +120,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
     persistStudio9LaunchEmail(params.get('studio9_email'))
+    persistStudio9OpenPackage(params.get('studio9_open'))
     setLaunchEmail(getStudio9DisplayEmail())
+    setLaunchPackageId(getStudio9OpenPackage())
 
     if (!isFirebaseConfigured) {
       setLoading(false)
@@ -133,6 +139,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
         const params = new URLSearchParams(window.location.search)
         persistStudio9LaunchEmail(params.get('studio9_email'))
+        persistStudio9OpenPackage(params.get('studio9_open'))
+        setLaunchPackageId(getStudio9OpenPackage())
         const handoff = params.get('studio9_handoff')
         if (handoff) {
           sessionStorage.setItem('studio9_from_conta', '1')
@@ -253,6 +261,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       hasFullAccess:
         openAccess || ALL_CHAPTER_PREFIXES.every((prefix) => allowedPrefixSet.has(prefix)),
       hasChapterAccess,
+      launchPackageId,
       configured: isFirebaseConfigured,
       sendMagicLink,
       logout,
@@ -268,6 +277,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       entitlementLoading,
       entitlementError,
       hasChapterAccess,
+      launchPackageId,
       sendMagicLink,
       logout,
       refreshEntitlement,

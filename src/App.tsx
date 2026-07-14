@@ -4,7 +4,8 @@ import { CourseNav, useLessonFromSelection, type LessonSelection } from "./compo
 import { LessonContent } from "./components/LessonContent";
 import { LockedChapterPanel } from "./components/LockedChapterPanel";
 import { useAuth } from "./context/AuthContext";
-import { courseTitle, systemById, systems } from "./data/curriculum";
+import { systemById, systems } from "./data/curriculum";
+import { resolveAppTitle, resolveOverviewLead } from "./lib/packageAccess";
 import { assetUrl } from "./utils/assetUrl";
 
 function collapsedRecord(ids: string[]): Record<string, boolean> {
@@ -14,7 +15,7 @@ function collapsedRecord(ids: string[]): Record<string, boolean> {
 }
 
 export default function App() {
-  const { hasChapterAccess, userEmail, logout } = useAuth();
+  const { hasChapterAccess, hasFullAccess, ownedPackageIds, launchPackageId, userEmail, logout } = useAuth();
   const [openSystems, setOpenSystems] = useState(() =>
     collapsedRecord(systems.map((s) => s.id)),
   );
@@ -75,6 +76,18 @@ export default function App() {
 
   const showMobileLessonBar = !mobileMenuOpen && !atHome && mobileLessonContext !== null;
   const shellMode = mobileMenuOpen ? "is-mobile-menu" : "is-mobile-content";
+  const appTitle = useMemo(
+    () => resolveAppTitle(ownedPackageIds, launchPackageId),
+    [ownedPackageIds, launchPackageId],
+  );
+  const overviewLead = useMemo(
+    () => resolveOverviewLead(ownedPackageIds, launchPackageId),
+    [ownedPackageIds, launchPackageId],
+  );
+  const visibleSystems = useMemo(
+    () => systems.filter((system) => hasChapterAccess(system.id)),
+    [hasChapterAccess],
+  );
 
   const dismissChapterOverview = () => setChapterBrowseId(null);
 
@@ -83,12 +96,9 @@ export default function App() {
   const overviewPanel = (
     <div className="overview-panel">
       <div className="overview-intro">
-        <p className="overview-lead">
-          Cytology, histology, embryology and organogenesis — four chapters with video, podcast,
-          infographic and quiz for each sub-topic.
-        </p>
+        <p className="overview-lead">{overviewLead}</p>
         <ul className="overview-systems" aria-label="Course chapters">
-          {systems.map((system) => (
+          {visibleSystems.map((system) => (
             <li
               key={system.id}
               className="overview-systems__item"
@@ -105,7 +115,7 @@ export default function App() {
       </div>
       <img
         src={overviewImage}
-        alt="Histology And Embryology — course overview"
+        alt={`${appTitle} — course overview`}
         className="overview-infographic"
       />
       <p className="overview-hint muted">
@@ -250,7 +260,7 @@ export default function App() {
           </span>
           <span className="home-overview-btn__label">Course overview</span>
         </button>
-        <h1>{courseTitle}</h1>
+        <h1>{appTitle}</h1>
         {userEmail ? (
           <div className="app-header__actions">
             <div className="auth-account">
@@ -290,6 +300,7 @@ export default function App() {
             onToggleSystem={toggleSystem}
             onToggleSection={toggleSection}
             onSelectLesson={selectLesson}
+            hideLockedChapters={!hasFullAccess}
             onLockedChapter={(id) => {
               setLockedChapterId(id);
               setAtHome(false);

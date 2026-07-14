@@ -79,6 +79,7 @@ export function authContinueUrl(): string {
 export const EMAIL_FOR_SIGN_IN_KEY = 'studio9.emailForSignIn'
 
 const STUDIO9_DISPLAY_EMAIL_KEY = 'studio9.displayEmail'
+const STUDIO9_OPEN_PACKAGE_KEY = 'studio9.openPackage'
 
 export function persistStudio9LaunchEmail(email: string | null): void {
   const value = email?.trim()
@@ -99,11 +100,30 @@ export function getStudio9DisplayEmail(): string | null {
   }
 }
 
+
+export function persistStudio9OpenPackage(packageId: string | null): void {
+  const value = packageId?.trim()
+  if (!value) return
+  try {
+    sessionStorage.setItem(STUDIO9_OPEN_PACKAGE_KEY, value)
+  } catch {
+    /* ignore */
+  }
+}
+
+export function getStudio9OpenPackage(): string | null {
+  try {
+    return sessionStorage.getItem(STUDIO9_OPEN_PACKAGE_KEY)
+  } catch {
+    return null
+  }
+}
+
 export function clearStudio9SessionMarkers(): void {
   try {
     sessionStorage.removeItem(STUDIO9_DISPLAY_EMAIL_KEY)
     sessionStorage.removeItem('studio9_from_conta')
-    sessionStorage.removeItem('studio9_open_package')
+    sessionStorage.removeItem(STUDIO9_OPEN_PACKAGE_KEY)
   } catch {
     /* ignore */
   }
