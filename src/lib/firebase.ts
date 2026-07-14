@@ -2,22 +2,45 @@ import { initializeApp, type FirebaseApp } from 'firebase/app'
 import { getAuth, type Auth } from 'firebase/auth'
 import { getFirestore, type Firestore } from 'firebase/firestore'
 
+declare global {
+  interface Window {
+    STUDIO9_FIREBASE?: {
+      apiKey: string
+      authDomain: string
+      projectId: string
+      appId: string
+    }
+  }
+}
+
 export const PACKAGE_ID =
   (import.meta.env.VITE_PACKAGE_ID as string | undefined) ?? 'histology-embryology'
 
 export const STORE_URL =
   (import.meta.env.VITE_STORE_URL as string | undefined) ??
-  'https://medical-science-lilac.vercel.app/precos/'
+  'https://studio9medical.com/precos/'
 
 export const ACCOUNT_URL =
   (import.meta.env.VITE_ACCOUNT_URL as string | undefined) ??
-  'https://medical-science-lilac.vercel.app/conta/'
+  'https://studio9medical.com/conta/'
 
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY as string | undefined,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN as string | undefined,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID as string | undefined,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID as string | undefined,
+  apiKey:
+    (import.meta.env.VITE_FIREBASE_API_KEY as string | undefined) ??
+    window.STUDIO9_FIREBASE?.apiKey ??
+    'AIzaSyBq-jO-0acTpRr0DESA27CKvNMCzEHESlc',
+  authDomain:
+    (import.meta.env.VITE_FIREBASE_AUTH_DOMAIN as string | undefined) ??
+    window.STUDIO9_FIREBASE?.authDomain ??
+    'studio9-medical.firebaseapp.com',
+  projectId:
+    (import.meta.env.VITE_FIREBASE_PROJECT_ID as string | undefined) ??
+    window.STUDIO9_FIREBASE?.projectId ??
+    'studio9-medical',
+  appId:
+    (import.meta.env.VITE_FIREBASE_APP_ID as string | undefined) ??
+    window.STUDIO9_FIREBASE?.appId ??
+    '1:872255591899:web:f21955ad7e22bc42af83fe',
 }
 
 export const isFirebaseConfigured = Boolean(
