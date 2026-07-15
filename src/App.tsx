@@ -5,7 +5,7 @@ import { LessonContent } from "./components/LessonContent";
 import { LockedChapterPanel } from "./components/LockedChapterPanel";
 import { useAuth } from "./context/AuthContext";
 import { systemById, systems } from "./data/curriculum";
-import { resolveAppTitle, resolveOverviewLead } from "./lib/packageAccess";
+import { resolveAppTitle, resolveOverviewImage, resolveOverviewLead } from "./lib/packageAccess";
 import { assetUrl } from "./utils/assetUrl";
 
 function collapsedRecord(ids: string[]): Record<string, boolean> {
@@ -84,14 +84,16 @@ export default function App() {
     () => resolveOverviewLead(ownedPackageIds, launchPackageId),
     [ownedPackageIds, launchPackageId],
   );
+  const overviewImage = useMemo(
+    () => assetUrl(resolveOverviewImage(ownedPackageIds, launchPackageId)),
+    [ownedPackageIds, launchPackageId],
+  );
   const visibleSystems = useMemo(
     () => systems.filter((system) => hasChapterAccess(system.id)),
     [hasChapterAccess],
   );
 
   const dismissChapterOverview = () => setChapterBrowseId(null);
-
-  const overviewImage = assetUrl("/InfographicA.png");
 
   const overviewPanel = (
     <div className="overview-panel">
