@@ -16,6 +16,10 @@ const cfg = {
 }
 
 const out = `window.STUDIO9_FIREBASE = ${JSON.stringify(cfg, null, 2)};\n`
-const target = path.join(__dirname, '..', 'public', 'firebase-config.js')
-fs.writeFileSync(target, out, 'utf8')
-console.log('Wrote', target)
+for (const dir of ['public', 'Public']) {
+  const folder = path.join(__dirname, '..', dir)
+  if (!fs.existsSync(folder)) continue
+  const target = path.join(folder, 'firebase-config.js')
+  fs.writeFileSync(target, out, 'utf8')
+  console.log('Wrote', target)
+}
