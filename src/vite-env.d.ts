@@ -11,6 +11,7 @@ interface ImportMetaEnv {
   readonly VITE_STORE_URL?: string
   readonly VITE_ACCOUNT_URL?: string
   readonly VITE_OPEN_ACCESS?: string
+  readonly VITE_MEDIA_ORIGIN?: string
 }
 
 interface ImportMeta {

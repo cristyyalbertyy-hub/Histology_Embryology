@@ -10,8 +10,15 @@ export function assetUrl(absolutePath: string): string {
     return `${path}${sep}v=${encodeURIComponent(v)}`;
   };
 
-  const base = import.meta.env.BASE_URL;
   if (!absolutePath.startsWith("/")) return withCacheBust(absolutePath);
+
+  const mediaOrigin = import.meta.env.VITE_MEDIA_ORIGIN;
+  if (mediaOrigin) {
+    const origin = mediaOrigin.endsWith("/") ? mediaOrigin : `${mediaOrigin}/`;
+    return withCacheBust(`${origin}${absolutePath.slice(1)}`);
+  }
+
+  const base = import.meta.env.BASE_URL;
   const path =
     !base || base === "/" ? absolutePath : `${base.replace(/\/$/, "")}${absolutePath}`;
   return withCacheBust(path);
